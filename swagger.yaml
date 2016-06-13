@@ -1,0 +1,142 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "0.0.1"
+  title: Sudoku API
+  description: Sudoku Game API.
+
+# Describe your paths here
+paths:
+  # This is a path endpoint. Change it.
+  /board/{boardid}:
+    # This is a HTTP operation
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `board` objects.
+        Path param of **boardid** determines the board you want to get by Id.
+      produces:
+        - application/json
+      parameters:
+        - name: boardid
+          in: path
+          description: Board ID
+          required: true
+          type: number
+          format: integer
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Board'
+        400:
+          description: Bad Request, not valid payload and/or ID
+        404:
+          description: Board Not Found
+    post:
+      description: | 
+        Updates an existing `board` or creates a new one
+      parameters:
+        - name: boardid
+          in: path
+          description: Board ID
+          required: true
+          type: number
+          format: integer
+      responses:
+        200:
+          description: ok
+          
+  /board/{boardid}/cell:
+    get:
+      description: Get all inserted cells in a board
+      responses:
+        200:
+          description: Array with all the cells on a board
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Cell'
+        400:
+          description: Bad Request.
+        404:
+          description: Board not found
+    post:
+      description: Updates a cell
+      consumes: 
+        - application/json
+      parameters:
+        - name: cell
+          in: body
+          description: cell description
+          schema:
+            $ref: '#/definitions/Cell'
+      responses:
+        200:
+          description: Movement ok. Cell updated ok
+        400:
+          description: Bad Request.
+        404:
+          description: Board or cell not found
+    delete:
+      description: Deletes a Cell
+      consumes: 
+        - application/json
+      parameters:
+        - name: cell
+          in: body
+          description: cell description
+          schema:
+            $ref: '#/definitions/Cell'
+      responses:
+        200:
+          description: Cell deleted successfully
+        400:
+          description: Bad Request. Not valid payload and/or ID
+        404:
+          description: Cell or board not found
+    parameters:
+      - name: boardid
+        in: path
+        type: string
+        description: ID of the board
+        required: true
+          
+definitions:
+  Cell:
+    title: Sudoku Cell
+    type: object
+    required: [ row, column, value ]
+    properties:
+      row: 
+        type: integer
+        maximum: 9
+        minimum: 1
+      column:
+        type: integer
+        maximum: 9
+        minimum: 1
+      value:
+        type: integer
+        maximum: 9
+        minimum: 1
+      
+  Board:
+    title: Sudoku Board
+    type: object
+    required: [ id ]
+    properties:
+      id:
+        type: string
+      isComplete:
+        type: boolean
+      cells:
+        type: array
+        items:
+          $ref: '#/definitions/Cell'
