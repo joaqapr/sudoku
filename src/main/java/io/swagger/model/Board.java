@@ -5,21 +5,23 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @ApiModel(description = "")
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringBootServerCodegen", date = "2016-06-13T18:34:20.426Z")
 public class Board {
 
-    private String id = null;
-    private Boolean isComplete = null;
-    private List<Cell> cells = new ArrayList<Cell>();
+    private String id = "";
+    private boolean isComplete = false;
+    private Set<Cell> cells = new HashSet<Cell>();
 
-    /**
-     **/
+    public Board() {   }
+
+    public Board(String id) {
+        this.id = id;
+    }
+
     @ApiModelProperty(required = true, value = "")
     @JsonProperty("id")
     @NotNull
@@ -35,11 +37,11 @@ public class Board {
      **/
     @ApiModelProperty(value = "")
     @JsonProperty("isComplete")
-    public Boolean getIsComplete() {
+    public boolean getIsComplete() {
         return isComplete;
     }
 
-    public void setIsComplete(Boolean isComplete) {
+    public void setIsComplete(boolean isComplete) {
         this.isComplete = isComplete;
     }
 
@@ -47,11 +49,11 @@ public class Board {
      **/
     @ApiModelProperty(value = "")
     @JsonProperty("cells")
-    public List<Cell> getCells() {
+    public Set<Cell> getCells() {
         return cells;
     }
 
-    public void setCells(List<Cell> cells) {
+    public void setCells(Set<Cell> cells) {
         this.cells = cells;
     }
 
@@ -66,7 +68,7 @@ public class Board {
         }
         Board board = (Board) o;
         return Objects.equals(id, board.id) &&
-                Objects.equals(isComplete, board.isComplete) &&
+                isComplete == board.isComplete &&
                 Objects.equals(cells, board.cells);
     }
 

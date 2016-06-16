@@ -13,44 +13,40 @@ import java.util.Objects;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringBootServerCodegen", date = "2016-06-13T18:34:20.426Z")
 public class Cell {
 
-    private Integer row = null;
-    private Integer column = null;
-    private Integer value = null;
+    private int row;
+    private int column;
+    private int value;
+
+    public Cell() {    }
+
+    public Cell(int row, int column, int value) {
+        this.row = row;
+        this.column = column;
+        this.value = value;
+    }
 
     @ApiModelProperty(required = true, value = "")
     @JsonProperty("row")
     @Max(9)
     @Min(0)
-    public Integer getRow() {
+    public int getRow() {
         return row;
-    }
-
-    public void setRow(Integer row) {
-        this.row = row;
     }
 
     @ApiModelProperty(required = true, value = "")
     @JsonProperty("column")
     @Max(9)
     @Min(0)
-    public Integer getColumn() {
+    public int getColumn() {
         return column;
-    }
-
-    public void setColumn(Integer column) {
-        this.column = column;
     }
 
     @ApiModelProperty(required = true, value = "")
     @JsonProperty("value")
     @Max(9)
     @Min(0)
-    public Integer getValue() {
+    public int getValue() {
         return value;
-    }
-
-    public void setValue(Integer value) {
-        this.value = value;
     }
 
 
@@ -63,9 +59,9 @@ public class Cell {
             return false;
         }
         Cell cell = (Cell) o;
-        return Objects.equals(row, cell.row) &&
-                Objects.equals(column, cell.column) &&
-                Objects.equals(value, cell.value);
+        return (row == cell.row) &&
+                (column == cell.column) &&
+                (value == cell.value);
     }
 
     @Override

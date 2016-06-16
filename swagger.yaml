@@ -26,8 +26,8 @@ paths:
           in: path
           description: Board ID
           required: true
-          type: number
-          format: integer
+          type: string
+          format: string
       # Expected responses for this operation:
       responses:
         # Response code
@@ -39,34 +39,24 @@ paths:
           description: Bad Request, not valid payload and/or ID
         404:
           description: Board Not Found
+  /board:
     post:
-      description: | 
+      description: |
         Updates an existing `board` or creates a new one
       parameters:
-        - name: boardid
-          in: path
+        - name: board
+          in: body
           description: Board ID
           required: true
-          type: number
-          format: integer
+          schema:
+            $ref: '#/definitions/Board'
       responses:
         200:
           description: ok
+        400:
+          description: Bad Request. Not valid payload
           
   /board/{boardid}/cell:
-    get:
-      description: Get all inserted cells in a board
-      responses:
-        200:
-          description: Array with all the cells on a board
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Cell'
-        400:
-          description: Bad Request.
-        404:
-          description: Board not found
     post:
       description: Updates a cell
       consumes: 
@@ -74,7 +64,7 @@ paths:
       parameters:
         - name: cell
           in: body
-          description: cell description
+          description: a cell in a Sudoku Board
           schema:
             $ref: '#/definitions/Cell'
       responses:
@@ -82,6 +72,8 @@ paths:
           description: Movement ok. Cell updated ok
         400:
           description: Bad Request.
+        403:
+          description: Wrong movement.
         404:
           description: Board or cell not found
     delete:
@@ -91,7 +83,7 @@ paths:
       parameters:
         - name: cell
           in: body
-          description: cell description
+          description: a cell in a Sudoku Board
           schema:
             $ref: '#/definitions/Cell'
       responses:
@@ -117,15 +109,15 @@ definitions:
       row: 
         type: integer
         maximum: 9
-        minimum: 1
+        minimum: 0
       column:
         type: integer
         maximum: 9
-        minimum: 1
+        minimum: 0
       value:
         type: integer
         maximum: 9
-        minimum: 1
+        minimum: 0
       
   Board:
     title: Sudoku Board
