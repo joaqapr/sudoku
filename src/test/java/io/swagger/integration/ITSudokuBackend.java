@@ -102,6 +102,7 @@ public class ITSudokuBackend {
         ResponseEntity<String> response = template.postForEntity(base.toString() + "board/default/cell", cell, String.class);
         assertTrue(response.getStatusCode().equals(HttpStatus.FORBIDDEN));
     }
+
     @Test
     public void testBoardCellMovement_expect200FinishGame() {
         Set<Cell> cells = new HashSet<>();
@@ -196,4 +197,5 @@ public class ITSudokuBackend {
         LOGGER.info("Response Get Board: " + responseBoard);
         assertTrue(responseBoard.getBody().getIsComplete());
     }
+
 }

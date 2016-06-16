@@ -3,8 +3,10 @@ package io.swagger.api;
 import io.swagger.annotations.*;
 import io.swagger.model.Board;
 import io.swagger.model.Cell;
+import io.swagger.service.SudokuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,8 @@ public class SuddokuBoardApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SuddokuBoardApi.class);
 
+    @Autowired
+    private SudokuService sudokuService;
 
     @ApiOperation(value = "", notes = "Deletes a Cell", response = ApiResponseMessage.class)
     @ApiResponses(value = {
@@ -34,8 +38,13 @@ public class SuddokuBoardApi {
             method = RequestMethod.DELETE)
     public ResponseEntity<ApiResponseMessage> boardBoardidCellDelete(@ApiParam(value = "ID of the board", required = true) @PathVariable("boardid") String boardid,
             @ApiParam(value = "cell description") @RequestBody Cell cell) throws NotFoundException {
-        // do some magic!
-        return new ResponseEntity<ApiResponseMessage>(new ApiResponseMessage(4, "Cell updated or created OK") , HttpStatus.OK);
+        Board board = sudokuService.findBoardById(boardid);
+        if (board == null)
+            return new ResponseEntity<ApiResponseMessage>(HttpStatus.NOT_FOUND);
+
+        sudokuService.deletedCell(board, cell);
+
+        return new ResponseEntity<ApiResponseMessage>(new ApiResponseMessage(4, "Cell deleted OK") , HttpStatus.OK);
     }
 
 
@@ -50,7 +59,15 @@ public class SuddokuBoardApi {
             method = RequestMethod.POST)
     public ResponseEntity<ApiResponseMessage> boardBoardidCellPost(@ApiParam(value = "ID of the board", required = true) @PathVariable("boardid") String boardid,
             @ApiParam(value = "cell description") @RequestBody Cell cell)  throws NotFoundException {
-
+        Board board = sudokuService.findBoardById(boardid);
+        if (board == null)
+            return new ResponseEntity<ApiResponseMessage>(HttpStatus.NOT_FOUND);
+        try {
+            sudokuService.updateCell(board, cell);
+        } catch (ApiException e) {
+            LOGGER.error(e.getMessage());
+            return new ResponseEntity<ApiResponseMessage>(new ApiResponseMessage(1, e.getMessage()) , HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<ApiResponseMessage>(new ApiResponseMessage(4, "Cell updated or created OK") , HttpStatus.OK);
     }
 
@@ -64,8 +81,11 @@ public class SuddokuBoardApi {
             produces = {"application/json"},
             method = RequestMethod.GET)
     public ResponseEntity<Board> boardBoardidGet(@ApiParam(value = "Board ID", required = true) @PathVariable("boardid") String boardid) {
+        Board board = sudokuService.findBoardById(boardid);
+        if (board == null)
+            return new ResponseEntity<Board>(HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<Board>(HttpStatus.OK);
+        return new ResponseEntity<Board>(board, HttpStatus.OK);
     }
 
 
@@ -77,7 +97,7 @@ public class SuddokuBoardApi {
             method = RequestMethod.POST)
     public ResponseEntity<ApiResponseMessage> boardBoardidPost(@RequestBody Board board)
             throws NotFoundException {
-
+        sudokuService.createOrUpdateBoard(board);
         return new ResponseEntity<ApiResponseMessage>(new ApiResponseMessage(4, "Board updated or created OK") , HttpStatus.OK);
     }
 
